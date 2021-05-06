@@ -63,169 +63,181 @@ guidata(hObject, handles);
 % UIWAIT makes Face_Detection wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
+%Source working directory containing s1 to s40 subdirectories where the source pgm image files
+%are stored
+FaceDataset = 'FaceDataset';
+%Destination working direction containing person1 to person40 subdirectories where test image
+%set are stored
+TestingDataset = 'TestingDataset';
+%Destination working direction containing person1 to person40 subdirectories where training image
+%set are stored
+TrainingDataset= 'TrainingDataset';
+
+%Width and height of downscaled images
+ResizedImageWidth = 20;
+
+%Save our filepaths to handles
+handles.FaceDataset = FaceDataset;
+handles.TestingDataset = TestingDataset;
+handles.TrainingDataset= TrainingDataset;
+handles.ResizedImageWidth = ResizedImageWidth;
+guidata(hObject,handles);
+
+
+
 
 % --- Outputs from this function are returned to the command line.
 
-%Function that delete image pgm files in the C:\UWA\Computer Vision\Project\TestFaceDataset'
-%and the 'C:\UWA\Computer Vision\Project\TrainingFaceDataset' Person
+%Function that delete image pgm files in the \TestingDataset'
+%and the '\TrainingDataset' Person
 %subfolders from directories passed to it from Select_Image_Partitions
-function delete_files_in_training_and_test_sets(TestFaceDataset,TrainingFaceDataset)
-%TestFaceDataset = 'E:\UWA\Computer Vision\Project\TestFaceDataset';
-%TrainingFaceDataset= 'E:\UWA\Computer Vision\Project\TrainingFaceDataset';
+function delete_files_in_training_and_test_sets(TestingDataset,TrainingDataset)
 
 %Getting the indexed directories in particular representing the subfolders Person1 to
-%Person40 in ‘C:\UWA\Computer Vison\Project\TestFaceDataSet’.  
-SubDirInTestFaceDataset= dir(TestFaceDataset);
-idxSubDir = [SubDirInTestFaceDataset.isdir];
-TestFaceDatasetfolders = {SubDirInTestFaceDataset(idxSubDir).name};
-%TestFaceDatasetsubdir = cell(1,numel(TestFaceDatasetfolders));
+%Person40 in ‘C:\UWA\Computer Vison\Project\TestingDataset’.  
+SubDirInTestingDataset= dir(TestingDataset);
+idxSubDir = [SubDirInTestingDataset.isdir] & ~strcmp({SubDirInTestingDataset.name},'.') & ~strcmp({SubDirInTestingDataset.name},'..');
+TestingDatasetFolders = {SubDirInTestingDataset(idxSubDir).name};
 
 %Getting the indexed directories in particular repesenting the subfolders Person1 to
-%Person40 in ‘C:\UWA\Computer Vison\Project\TrainingFaceDataSet’
-SubDirInTrainFaceDataset= dir(TrainingFaceDataset);
-idxSubDir = [SubDirInTrainFaceDataset.isdir];
-TrainFaceDatasetfolders = {SubDirInTrainFaceDataset(idxSubDir).name};
-%TrainFaceDatasetsubdir = cell(1,numel(TrainFaceDatasetfolders));
+%Person40 in ‘C:\UWA\Computer Vison\Project\TrainingDataset’
+SubDirInTrainingDataset= dir(TrainingDataset);
+idxSubDir = [SubDirInTrainingDataset.isdir] & ~strcmp({SubDirInTrainingDataset.name},'.') & ~strcmp({SubDirInTrainingDataset.name},'..');
+TrainingDatasetFolders = {SubDirInTrainingDataset(idxSubDir).name};
 
-%Looping through the numbers of elements in TestFaceDatasetfolders which is the same as
-%number of elements in TrainFaceDatasetfolders and deleting
+%Looping through the numbers of elements in TestingDatasetFolders which is the same as
+%number of elements in TrainingDatasetFolders and deleting
 %all pgm files within each of the indexed folders corresponding the folders
-%Person1 to Person40 within 'C:\UWA\Computer Vision\Project\TestFaceDataset' and
-%C:\UWA\Computer Vision\Project\TrainingFaceDataset
-for i= 1:numel(TestFaceDatasetfolders)
-  %FaceDatasetsubdir{i} = fullfile(FaceDataset,FaceDatasetfolders{i});
-  delete(fullfile(TestFaceDataset,TestFaceDatasetfolders{i},'*.pgm'));   %dir
-  delete(fullfile(TrainingFaceDataset,TrainFaceDatasetfolders{i},'*.pgm'))
+%Person1 to Person40 within '\TestingDataset' and
+%\TrainingDataset
+for i= 1:numel(TestingDatasetFolders)
+  %FaceDatasetsubdir{i} = fullfile(FaceDataset,FaceDatasetFolders{i});
+  delete(fullfile(TestingDataset,TestingDatasetFolders{i},'*.pgm'));   %dir
+  delete(fullfile(TrainingDataset,TrainingDatasetFolders{i},'*.pgm'));
 end
 
 %Function to move pgm vision files in 50/50 split into the Person1 to
-%Person40 subfolders in 'C:\UWA\Computer Vision\Project\TestFaceDataset' and
-%in 'C:\UWA\Computer Vision\Project\TrainingFaceDataset';
-function middle_split(FaceDataset, TestFaceDataset,TrainingFaceDataset)
-%FaceDataset = 'E:\UWA\Computer Vision\Project\FaceDataset';
-%TestFaceDataset = 'E:\UWA\Computer Vision\Project\TestFaceDataset';
-%TrainingFaceDataset= 'E:\UWA\Computer Vision\Project\TrainingFaceDataset';
+%Person40 subfolders in '\TestingDataset' and
+%in '\TrainingDataset';
+function middle_split(FaceDataset, TestingDataset, TrainingDataset)
 
 %Get the source directory of the image files 
 SubDirInFaceDataset= dir(FaceDataset);
-idxSubDir = [SubDirInFaceDataset.isdir];
+idxSubDir = [SubDirInFaceDataset.isdir] & ~strcmp({SubDirInFaceDataset.name},'.') & ~strcmp({SubDirInFaceDataset.name},'..');
 % folders in FaceDataset
 
-%Get all the s1 to s40 subdirectories in the 'C:\UWA\Computer Vision\Project\FaceDataset'
+%Get all the s1 to s40 subdirectories in the '\FaceDataset'
 %image source directory
-FaceDatasetfolders = {SubDirInFaceDataset(idxSubDir).name};
-%FaceDatasetsubdir = cell(1,numel(FaceDatasetfolders));
+FaceDatasetFolders = {SubDirInFaceDataset(idxSubDir).name};
+%FaceDatasetsubdir = cell(1,numel(FaceDatasetFolders));
 
+SubDirInTestingDataset= dir(TestingDataset);
+idxSubDir = [SubDirInTestingDataset.isdir] & ~strcmp({SubDirInTestingDataset.name},'.') & ~strcmp({SubDirInTestingDataset.name},'..');
+%Folders in TestingDataset
+%Get all the Person1 to Person40 folders in '\TestingDataset'
+TestingDatasetFolders = {SubDirInTestingDataset(idxSubDir).name};
+%TestingDatasetsubdir = cell(1,numel(TestingDatasetFolders));
 
-SubDirInTestFaceDataset= dir(TestFaceDataset);
-idxSubDir = [SubDirInTestFaceDataset.isdir];
-%Folders in TestFaceDataset
-%Get all the Person1 to Person40 folders in 'C:\UWA\Computer Vision\Project\TestFaceDataset'
-TestFaceDatasetfolders = {SubDirInTestFaceDataset(idxSubDir).name};
-%TestFaceDatasetsubdir = cell(1,numel(TestFaceDatasetfolders));
-
-SubDirInTrainFaceDataset= dir(TrainingFaceDataset);
-idxSubDir = [SubDirInTrainFaceDataset.isdir];
-%Get all the Person1 to Person40 folders in 'C:\UWA\Computer Vision\Project\TrainingFaceDataset'
-TrainFaceDatasetfolders = {SubDirInTrainFaceDataset(idxSubDir).name};
-TrainFaceDatasetsubdir = cell(1,numel(TrainFaceDatasetfolders));
+SubDirInTrainingDataset= dir(TrainingDataset);
+idxSubDir = [SubDirInTrainingDataset.isdir] & ~strcmp({SubDirInTrainingDataset.name},'.') & ~strcmp({SubDirInTrainingDataset.name},'..');
+%Get all the Person1 to Person40 folders in '\TrainingDataset'
+TrainingDatasetFolders = {SubDirInTrainingDataset(idxSubDir).name};
+TrainingDatasetsubdir = cell(1,numel(TrainingDatasetFolders));
 
 %Loop through the indexed folders corresponding all the s1 to s40 subfolders in
-%'C:\UWA\Computer Vision\Project\FaceDataset'
-for i= 1:numel(FaceDatasetfolders)
-  FaceDatasetsubdir{i} = fullfile(FaceDataset,FaceDatasetfolders{i});
+%'\FaceDataset'
+for i= 1:numel(FaceDatasetFolders)
+  FaceDatasetsubdir{i} = fullfile(FaceDataset,FaceDatasetFolders{i});
   
   %Get all the pgm files in the source based indexed folder and index them 
-  ImageFiles = dir(fullfile(FaceDataset,FaceDatasetfolders{i},'*.pgm'));   %dir
+  ImageFiles = dir(fullfile(FaceDataset,FaceDatasetFolders{i},'*.pgm'));   %dir
   %SizeImageFiles = cell(size(ImageFiles));
   
   %Get the indexed subfolders corresponding to Person1 to Person40 subdirectories in
-  %'C:\UWA\Computer Vision\Project\TrainingFaceDataset' that have a one to one correspondence
-  %with those 'in 'C:\UWA\Computer Vision\Project\FaceDataset 
-  TrainFaceDatasetsubdir{i} = fullfile(TrainingFaceDataset,TrainFaceDatasetfolders{i});
-  disp(TrainFaceDatasetsubdir{i})
+  %'\TrainingDataset' that have a one to one correspondence
+  %with those 'in '\FaceDataset 
+  TrainingDatasetsubdir{i} = fullfile(TrainingDataset,TrainingDatasetFolders{i});
+  %disp(TrainingDatasetsubdir{i})
   
   %Get the indexed subfolders corresponding to Person1 to Person40 subdirectories in
-  %'C:\UWA\Computer Vision\Project\TestFaceDataset' that have a one to one correspondence
-  %match with those %'in 'C:\UWA\Computer Vision\Project\FaceDataset 
-  TestFaceDatasetsubdir{i} =  fullfile(TestFaceDataset,TestFaceDatasetfolders{i});
-  disp(TestFaceDatasetsubdir{i})
+  %'\TestingDataset' that have a one to one correspondence
+  %match with those %'in '\FaceDataset 
+  TestingDatasetsubdir{i} =  fullfile(TestingDataset,TestingDatasetFolders{i});
+  %disp(TestingDatasetsubdir{i})
   
   %Loop through all the indexed pmg images in each the s1 to s40 subfolders in
-  %'C:\UWA\Computer Vision\Project\FaceDataset'
+  %'\FaceDataset'
   for j = 1:numel(ImageFiles)
     image = ImageFiles(j).name;  
     %source = strcat(FaceDatasetsubdir{i},image);
-    source = fullfile(FaceDataset,FaceDatasetfolders{i},image);
-    destTrain = fullfile(TrainingFaceDataset,TrainFaceDatasetfolders{i},image);
-    destTest= fullfile(TestFaceDataset,TestFaceDatasetfolders{i},image);
+    source = fullfile(FaceDataset,FaceDatasetFolders{i},image);
+    destTrain = fullfile(TrainingDataset,TrainingDatasetFolders{i},image);
+    destTest= fullfile(TestingDataset,TestingDatasetFolders{i},image);
     %If index is less than 5 copy pgm file to a person folder in 
-    %'C:\UWA\Computer Vision\Project\TrainingFaceDataset'
+    %'\TrainingDataset'
     if j <=5
         copyfile(source,destTrain)        
-    elseif j>5 %Else if index is more than 5 copy pgm file to a Person folder in 'C:\UWA\Computer Vision\Project\TestFaceDataset'
+    elseif j>5 %Else if index is more than 5 copy pgm file to a Person folder in '\TestingDataset'
         copyfile(source,destTest)       
         
     end    
   end
 end 
+
 %Function to move pgm vision files in an interleaved 50/50 split into the Person1 to
-%Person40 subfolders in 'C:\UWA\Computer Vision\Project\TestFaceDataset' and
-%in 'C:\UWA\Computer Vision\Project\TrainingFaceDataset';
-function interleave(FaceDataset, TestFaceDataset,TrainingFaceDataset)
-%FaceDataset = 'E:\UWA\Computer Vision\Project\FaceDataset';
-%TestFaceDataset = 'E:\UWA\Computer Vision\Project\TestFaceDataset';
-%TrainingFaceDataset= 'E:\UWA\Computer Vision\Project\TrainingFaceDataset';
+%Person40 subfolders in '\TestingDataset' and
+%in '\TrainingDataset';
+function interleave(FaceDataset, TestingDataset,TrainingDataset)
 
 SubDirInFaceDataset= dir(FaceDataset);
-idxSubDir = [SubDirInFaceDataset.isdir];
-%Get all the indexed s1 to s40 subdirectories in the 'C:\UWA\Computer Vision\Project\FaceDataset'
+idxSubDir = [SubDirInFaceDataset.isdir] & ~strcmp({SubDirInFaceDataset.name},'.') & ~strcmp({SubDirInFaceDataset.name},'..');
+%Get all the indexed s1 to s40 subdirectories in the '\FaceDataset'
 %image source directory
-FaceDatasetfolders = {SubDirInFaceDataset(idxSubDir).name};
-FaceDatasetsubdir = cell(1,numel(FaceDatasetfolders));
+FaceDatasetFolders = {SubDirInFaceDataset(idxSubDir).name};
+FaceDatasetsubdir = cell(1,numel(FaceDatasetFolders));
 
 
-SubDirInTestFaceDataset= dir(TestFaceDataset);
-idxSubDir = [SubDirInTestFaceDataset.isdir];
-%Get all the indexed  person1 to person40 subdirectories in the 'C:\UWA\Computer Vision\Project\TestFaceDataset'
+SubDirInTestingDataset= dir(TestingDataset);
+idxSubDir = [SubDirInTestingDataset.isdir] & ~strcmp({SubDirInTestingDataset.name},'.') & ~strcmp({SubDirInTestingDataset.name},'..');
+%Get all the indexed  person1 to person40 subdirectories in the '\TestingDataset'
 %image source directory
-TestFaceDatasetfolders = {SubDirInTestFaceDataset(idxSubDir).name};
-TestFaceDatasetsubdir = cell(1,numel(TestFaceDatasetfolders));
+TestingDatasetFolders = {SubDirInTestingDataset(idxSubDir).name};
+TestingDatasetsubdir = cell(1,numel(TestingDatasetFolders));
 
-SubDirInTrainFaceDataset= dir(TrainingFaceDataset);
-idxSubDir = [SubDirInTrainFaceDataset.isdir];
-%Get all the indexed  person1 to person40 subdirectories in the 'C:\UWA\Computer Vision\Project\TrainingFaceDataset'
+SubDirInTrainingDataset= dir(TrainingDataset);
+idxSubDir = [SubDirInTrainingDataset.isdir] & ~strcmp({SubDirInTrainingDataset.name},'.') & ~strcmp({SubDirInTrainingDataset.name},'..');
+%Get all the indexed  person1 to person40 subdirectories in the '\TrainingDataset'
 %image source directory
-TrainFaceDatasetfolders = {SubDirInTrainFaceDataset(idxSubDir).name};
-TrainFaceDatasetsubdir = cell(1,numel(TrainFaceDatasetfolders));
+TrainingDatasetFolders = {SubDirInTrainingDataset(idxSubDir).name};
+TrainingDatasetsubdir = cell(1,numel(TrainingDatasetFolders));
 
 %Loop through all the indexed pmg images in each the s1 to s40 subfolders in
-%'C:\UWA\Computer Vision\Project\FaceDataset'
-for i= 1:numel(FaceDatasetfolders)
-  FaceDatasetsubdir{i} = fullfile(FaceDataset,FaceDatasetfolders{i});
-  ImageFiles = dir(fullfile(FaceDataset,FaceDatasetfolders{i},'*.pgm'));   %dir
+%'\FaceDataset'
+for i= 1:numel(FaceDatasetFolders)
+  FaceDatasetsubdir{i} = fullfile(FaceDataset,FaceDatasetFolders{i});
+  ImageFiles = dir(fullfile(FaceDataset,FaceDatasetFolders{i},'*.pgm'));   %dir
   SizeImageFiles = cell(size(ImageFiles));
-  TrainFaceDatasetsubdir{i} = fullfile(TrainingFaceDataset,TrainFaceDatasetfolders{i});
-  disp(TrainFaceDatasetsubdir{i})
-  TestFaceDatasetsubdir{i} =  fullfile(TestFaceDataset,TestFaceDatasetfolders{i});
-  disp(TestFaceDatasetsubdir{i})
+  TrainingDatasetsubdir{i} = fullfile(TrainingDataset,TrainingDatasetFolders{i});
+  %disp(TrainingDatasetsubdir{i})
+  TestingDatasetsubdir{i} =  fullfile(TestingDataset,TestingDatasetFolders{i});
+  %disp(TestingDatasetsubdir{i})
   %Loop through all the indexed pmg images in each the s1 to s40 subfolders in
-  %'C:\UWA\Computer Vision\Project\FaceDataset'
+  %'\FaceDataset'
   for j = 1:numel(ImageFiles)
     %Remainder after index is divided by two   
-    rem = mod(j,2)  
+    rem = mod(j,2);
     image = ImageFiles(j).name;  
     %source = strcat(FaceDatasetsubdir{i},image);
-    source = fullfile(FaceDataset,FaceDatasetfolders{i},image);
-    destTrain = fullfile(TrainingFaceDataset,TrainFaceDatasetfolders{i},image);
-    destTest= fullfile(TestFaceDataset,TestFaceDatasetfolders{i},image);
+    source = fullfile(FaceDataset,FaceDatasetFolders{i},image);
+    destTrain = fullfile(TrainingDataset,TrainingDatasetFolders{i},image);
+    destTest= fullfile(TestingDataset,TestingDatasetFolders{i},image);
     if rem == 0
         % If remainder is zero copy image to subfolders a person directory
-        % in 'C:\UWA\Computer Vision\Project\TrainingFaceDataset
+        % in '\TrainingDataset
         copyfile(source,destTrain)        
     elseif rem ~= 0
         % If remainder is not equal to zero copy image to subfolders a person directory
-        % in 'C:\UWA\Computer Vision\Project\TestFaceDataset
+        % in '\TestingDataset
         copyfile(source,destTest)       
         
     end    
@@ -252,40 +264,25 @@ str = get(hObject, 'String');
 val = get(hObject,'Value');
 % Set current data to the selected data set.
 
-%Source working directory containing s1 to s40 subdirectories where the source pgm image files
-%are stored
-FaceDataset = 'C:\UWA\Computer Vision\Project\FaceDataset';
-%Destination working direction containing person1 to person40 subdirectories where test image
-%set are stored
-TestFaceDataset = 'C:\UWA\Computer Vision\Project\TestFaceDataset';
-%Destination working direction containing person1 to person40 subdirectories where training image
-%set are stored
-TrainingFaceDataset= 'C:\UWA\Computer Vision\Project\TrainingFaceDataset';
-
-%FaceDataset = 'I:\UWA\Computer Vision\Project\FaceDataset';
-%TestFaceDataset = 'I:\UWA\Computer Vision\Project\TestFaceDataset';
-%TrainingFaceDataset= 'I:\UWA\Computer Vision\Project\TrainingFaceDataset';
-handles = guidata(hObject);
-%Give the testFaceDataSet a handle so it can be accessed in other guis
-handles.TestFaceDataSet = TestFaceDataset;
-%Give the testFaceDataSet a handle so it can be accessed in other guis
-handles.TrainingFaceDataset= TrainingFaceDataset;
 %read in a value from the dropdown box 
 switch str{val}
 case 'Middle Split' % User selects middle split
    disp('middle split')
-   %Clear any pgm image files in the TestFaceDataset and TrainingFaceDataset  
-   delete_files_in_training_and_test_sets(TestFaceDataset,TrainingFaceDataset)
-   %Allocate image pgm files to the TestFaceDataset and TrainingFaceDataset according to middle split
+   %Clear any pgm image files in the TestingDataset and TrainingDataset  
+   delete_files_in_training_and_test_sets(handles.TestingDataset,handles.TrainingDataset)
+   %Allocate image pgm files to the TestingDataset and TrainingDataset according to middle split
    %operation
-   middle_split(FaceDataset, TestFaceDataset,TrainingFaceDataset)
+   middle_split(handles.FaceDataset, handles.TestingDataset,handles.TrainingDataset)
 case 'Interleave' % User selects interleave
-   %Clear any pgm image files in the TestFaceDataset and TrainingFaceDataset   
-   delete_files_in_training_and_test_sets(TestFaceDataset,TrainingFaceDataset)
-    %Allocate image pgm files to the TestFaceDataset and TrainingFaceDataset according to interleave
+   %Clear any pgm image files in the TestingDataset and TrainingDataset   
+   delete_files_in_training_and_test_sets(handles.TestingDataset,handles.TrainingDataset)
+    %Allocate image pgm files to the TestingDataset and TrainingDataset according to interleave
     %operation
-   interleave(FaceDataset, TestFaceDataset,TrainingFaceDataset)
+   interleave(handles.FaceDataset,handles.TestingDataset,handles.TrainingDataset)
 end
+
+msgbox("Files partitioned!");
+
 % Save the handles structure.
 guidata(hObject,handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns Select_Image_Partitions contents as cell array
@@ -340,19 +337,17 @@ function Load_image_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 %Get file path and file to where the MATLAB program is located   
-[file,path] = uigetfile('*.m');
+[file,path] = uigetfile('*.pgm');
 if isequal(file,0)
    disp('User selected Cancel');
 else
    disp(['User selected ', fullfile(path,file)]);
-   path_file = fullfile(path,file)
-   file2 = imread(path_file);    %read in the file    
+   path_file = fullfile(path,file);
+   file_in = imread(path_file);    %read in the file    
    %Retrieve GUI data
    handles = guidata(hObject);
-   %handles.image_opened = ind2rgb(X1, map1);
-   %handles.image_opened = file2;
    %Get a handle for the files so it can be accessed in the other uis
-   handles.image_opened = file2;                      %rgb2gray(file2); %Convert image to greyscale
+   handles.image_opened = file_in;
    axes(handles.axes1);    %Set axes1 as the display box
    imshow(handles.image_opened);  %display the image
    %Update handles structure 
@@ -366,93 +361,79 @@ function Train_On_Image_Gallery_Callback(hObject, eventdata, handles)
 % hObject    handle to Train_On_Image_Gallery (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-handles = guidata(hObject);
-%FaceDataset = 'E:\UWA\Computer Vision\Project\FaceDataset';
-%TestFaceDataset = 'E:\UWA\Computer Vision\Project\TestFaceDataset';
-%TrainingFaceDataset= 'E:\UWA\Computer Vision\Project\TrainingFaceDataset';
-
 %where the training set is located
-TrainingFaceDataset= 'C:\UWA\Computer Vision\Project\TrainingFaceDataset';
-TrainFaceDataset = TrainingFaceDataset;
-SubDirInTrainFaceDataset= dir(TrainFaceDataset);
-idxSubDir = [SubDirInTrainFaceDataset.isdir];
-%Folders for each face in TrainFaceDataset
-TrainFaceDatasetfolders = {SubDirInTrainFaceDataset(idxSubDir).name};
-handles.TrainFaceDatasetfolders= TrainFaceDatasetfolders;
-TrainFaceDatasetsubdir = cell(1,numel(TrainFaceDatasetfolders));
+
+TrainingDataset = handles.TrainingDataset;
+SubDirInTrainingDataset= dir(TrainingDataset);
+idxSubDir = [SubDirInTrainingDataset.isdir] & ~strcmp({SubDirInTrainingDataset.name},'.') & ~strcmp({SubDirInTrainingDataset.name},'..');
+%Folders for each face in TrainingDataset
+TrainingDatasetFolders = {SubDirInTrainingDataset(idxSubDir).name};
+NumTrainingDatasetFolders = size(TrainingDatasetFolders, 2);
+handles.TrainingDatasetFolders= TrainingDatasetFolders;
 
 %Allocation of zeros for a 4 dimensional matrix representing all the training class specific
 %models of the images. The first index is the number of row which in this case is the height
 %of the column vector created from the images.5 is the number of images in the Person director
-%42 is the number of the class specific models where directories . and .. are also included 
-X= zeros(10304, 5,42);
+%NumTrainingDatasetFolders is the number of the class specific models
+X= zeros(10304, 5,NumTrainingDatasetFolders);
+%X_resized = zeros(handles.ResizedImageWidth * handles.ResizedImageWidth, 5, NumTrainingDatasetFolders);
 %Give the whose set of class specific models so it can be access in all of the gui*
 handles.X = X;
+%handles.X_resized = X_resized;
 
-handles.NumTrainFaceDatsetfolders = numel(TrainFaceDatasetfolders);
+handles.NumTrainingDatasetFolders = numel(TrainingDatasetFolders);
 
 %Loop through Training face subdirectories
-for i= 3:numel(TrainFaceDatasetfolders) 
- %TrainFaceDatasetsubdir{i}
- P = fullfile(TrainFaceDataset,TrainFaceDatasetfolders{i});
- %Image files in TrainFaceDataset/TrainFaceDatasetfolders
- D = dir(fullfile(TrainFaceDataset,TrainFaceDatasetfolders{i},'*.pgm'));   %dir
+for i= 1:numel(TrainingDatasetFolders) 
+ P = fullfile(TrainingDataset,TrainingDatasetFolders{i});
+ %Image files in TrainingDataset/TrainingDatasetFolders
+ D = dir(fullfile(TrainingDataset,TrainingDatasetFolders{i},'*.pgm'));   %dir
  C= cell(size(D));
- %SizeImageFiles = cell(size(ImageFiles));
- %TrainFaceDatasetsubdir{i} = fullfile(TrainingFaceDataset,TrainFaceDatasetfolders{i});
- %disp(TrainFaceDatasetsubdir{i})
- %disp('folder i')
- %disp(i) 
- disp(TrainFaceDatasetfolders{i})
- %disp('number of elements in D');
- %disp(numel(D));
  
  %Set up a storage matrix which will have column image vectors appended to it 
- dummyMatrix = [];
+ X_i = [];
+ %X_i_resized = [];
  
- %disp('num elts D')
- %disp(numel(D))
  
  %Loop through images in Person subdirecties in directory 
- %'C:\UWA\Computer Vision\Project\TrainFaceDataset'
  for j = 1:numel(D)
      
     %read the image file in the directory  
     C{j} = imread(fullfile(P,D(j).name));
     
     %Create a column vector from the image read
-    imgVector = C{j}(:)
-    ;
+    imgVector = C{j}(:);
     %Normalize the vector by converting it to double and dividing by its norm
     imgVector = double(imgVector);
     imgVector= imgVector/norm(imgVector);
     
-    %imgVector = transpose(imgVector); 
-    %disp('imgVector')
-    %disp(imgVector)
+    %imgVector_resized = C{j}(:);
+    %imgVector_resized = imresize(imgVector_resized, [handles.ResizedImageWidth handles.ResizedImageWidth], "bilinear");
+    %imgVector_resized = double(imgVector_resized);
+    %imgVector_resized = imgVector_resized/norm(imgVector_resized);
     
     %Append the image column vector to the storage matrix
-    dummyMatrix= [dummyMatrix imgVector];
+    X_i= [X_i imgVector];
+    %X_i_resized = [X_i_resized imgVector_resized];
     
-    %disp('size of dummy matrix')
-    %disp(size(dummyMatrix)); 
-    %path_name = ImageFiles(j).name; 
-    %Img = imread(fullfile(TrainFaceDatasetsubdir{i}path_name) 
-    %image = ImageFiles(j).name;  
-    %disp(j)
  end
     
      
      %If the number of images in the subdirectory is not equal to 0
       if numel(D) ~= 0
       
-      %Assign the ith class specific model the dummy matrix     
-         X(:,:,i) = dummyMatrix;
-         %%Assign the ith class specific model with a handle the dummy matrix
-         handles.X(:,:,i) = dummyMatrix;
+         %Assign the ith class specific model the dummy matrix     
+         X(:,:,i) = X_i;
+         %Assign the ith class specific model with a handle the dummy matrix
+         handles.X(:,:,i) = X_i;
+              
+         %X_resized(:,:,i) = X_i_resized;
+         %handles.X_resized(:,:,i) = X_i_resized;
       end
-    %end 
+      
 end
+
+msgbox("Model trained!");
 
 %After having gone through the image trim off the first two columns of the container of the class 
 %specific model so it is if the format X(10304, 5,40) required for the computation of the Euclidean
@@ -477,27 +458,23 @@ imgVectorTest = image_opened(:);
 imgVectorTest = double(imgVectorTest);
 %Norm The vector
 imgVectorTest = imgVectorTest/norm(imgVectorTest);
-disp(imgVectorTest);
 
 %Get the number of Person Trained dataset folders
-num_trained_faces= handles.NumTrainFaceDatsetfolders;
-%Xi= zeros(10304, 5,40);
-disp('no trained faces')
-disp(num_trained_faces)
+num_trained_faces= handles.NumTrainingDatasetFolders;
 
-TrainFaceDataset= 'C:\UWA\Computer Vision\Project\TrainingFaceDataset';
-%TrainFaceDataset= 'I:\UWA\Computer Vision\Project\TrainingFaceDataset';
+TrainingDataset= handles.TrainingDataset;
 minDist = Inf;
-TrainFaceFolder = handles.TrainFaceDatasetfolders;
+TrainFaceFolder = handles.TrainingDatasetFolders;
 %Loop through all Person subfolders ignoring . and ..
-for i= 3:num_trained_faces
-  P = fullfile(TrainFaceDataset,handles.TrainFaceDatasetfolders{i});
-  D = dir(fullfile(TrainFaceDataset,TrainFaceFolder{i},'*.pgm'));
+axes(handles.axes2);
+for i= 1:num_trained_faces
+  P = fullfile(TrainingDataset,handles.TrainingDatasetFolders{i});
+  D = dir(fullfile(TrainingDataset,TrainFaceFolder{i},'*.pgm'));
   %Display a representative image from the training set corresponding to class specific model
   %being tested for
-  axes(handles.axes2);
   C = imread(fullfile(P,D(1).name));
-  imshow(C)
+  axes(handles.axes2);
+  imshow(C);
   
   %summon up the ith class specific model 
   Xi= handles.X(:,:,i);
@@ -514,17 +491,17 @@ for i= 3:num_trained_faces
     indexNearestFace = i;
   end  
 end
-TrainFaceFolder = handles.TrainFaceDatasetfolders;
+TrainFaceFolder = handles.TrainingDatasetFolders;
 
 %Get directory where nearest face is held 
-P = fullfile(TrainFaceDataset,handles.TrainFaceDatasetfolders{indexNearestFace});
-D = dir(fullfile(TrainFaceDataset,TrainFaceFolder{indexNearestFace},'*.pgm'));
+P = fullfile(TrainingDataset,handles.TrainingDatasetFolders{indexNearestFace});
+D = dir(fullfile(TrainingDataset,TrainFaceFolder{indexNearestFace},'*.pgm'));
 
 %Display nearest face
 axes(handles.axes2);
 C = imread(fullfile(P,D(1).name));
-imshow(C)
-guidata(hObject, handles)
+imshow(C);
+guidata(hObject, handles);
 
 
 % --- Executes during object creation, after setting all properties.
