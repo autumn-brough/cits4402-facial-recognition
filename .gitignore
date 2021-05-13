@@ -2,6 +2,3 @@
 *.asv
 *.DS_Store
 .DS_Store
-
-TestingDataset/*/*
-TrainingDataset/*/*
