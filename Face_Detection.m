@@ -111,9 +111,77 @@ TrainingDatasetFolders = {SubDirInTrainingDataset(idxSubDir).name};
 %Person1 to Person40 within '\TestingDataset' and
 %\TrainingDataset
 for i= 1:numel(TestingDatasetFolders)
-  %FaceDatasetsubdir{i} = fullfile(FaceDataset,FaceDatasetFolders{i});
+  %FaceDatasetSubDir{i} = fullfile(FaceDataset,FaceDatasetFolders{i});
   delete(fullfile(TestingDataset,TestingDatasetFolders{i},'*.pgm'));   %dir
   delete(fullfile(TrainingDataset,TrainingDatasetFolders{i},'*.pgm'));
+end
+
+
+function split_split(FaceDataset, TestingDataset, TrainingDataset, split_definition)
+
+%example use: split definition = ["train, "train", "train", "train", "train", "test", "test", "test", "test", "test"]
+
+%Get the source directory of the image files 
+SubDirInFaceDataset= dir(FaceDataset);
+idxSubDir = [SubDirInFaceDataset.isdir] & ~strcmp({SubDirInFaceDataset.name},'.') & ~strcmp({SubDirInFaceDataset.name},'..');
+% folders in FaceDataset
+
+%Get all the s1 to s40 subdirectories in the '\FaceDataset'
+%image source directory
+FaceDatasetFolders = {SubDirInFaceDataset(idxSubDir).name};
+FaceDatasetSubDir = cell(1,numel(FaceDatasetFolders));
+
+SubDirInTestingDataset= dir(TestingDataset);
+idxSubDir = [SubDirInTestingDataset.isdir] & ~strcmp({SubDirInTestingDataset.name},'.') & ~strcmp({SubDirInTestingDataset.name},'..');
+%Folders in TestingDataset
+%Get all the Person1 to Person40 folders in '\TestingDataset'
+TestingDatasetFolders = {SubDirInTestingDataset(idxSubDir).name};
+%TestingDatasetSubDir = cell(1,numel(TestingDatasetFolders));
+
+SubDirInTrainingDataset= dir(TrainingDataset);
+idxSubDir = [SubDirInTrainingDataset.isdir] & ~strcmp({SubDirInTrainingDataset.name},'.') & ~strcmp({SubDirInTrainingDataset.name},'..');
+%Get all the Person1 to Person40 folders in '\TrainingDataset'
+TrainingDatasetFolders = {SubDirInTrainingDataset(idxSubDir).name};
+TrainingDatasetSubDir = cell(1,numel(TrainingDatasetFolders));
+
+%Loop through the indexed folders corresponding all the s1 to s40 subfolders in
+%'\FaceDataset'
+for i= 1:numel(FaceDatasetFolders)
+  FaceDatasetSubDir{i} = fullfile(FaceDataset,FaceDatasetFolders{i});
+  
+  %Get all the pgm files in the source based indexed folder and index them 
+  ImageFiles = dir(fullfile(FaceDataset,FaceDatasetFolders{i},'*.pgm'));   %dir
+  %SizeImageFiles = cell(size(ImageFiles));
+  
+  %Get the indexed subfolders corresponding to Person1 to Person40 subdirectories in
+  %'\TrainingDataset' that have a one to one correspondence
+  %with those 'in '\FaceDataset 
+  TrainingDatasetSubDir{i} = fullfile(TrainingDataset,TrainingDatasetFolders{i});
+  %disp(TrainingDatasetSubDir{i})
+  
+  %Get the indexed subfolders corresponding to Person1 to Person40 subdirectories in
+  %'\TestingDataset' that have a one to one correspondence
+  %match with those %'in '\FaceDataset 
+  TestingDatasetSubDir{i} =  fullfile(TestingDataset,TestingDatasetFolders{i});
+  %disp(TestingDatasetSubDir{i})
+  
+  %Loop through all the indexed pmg images in each the s1 to s40 subfolders in
+  %'\FaceDataset'
+  for j = 1:numel(ImageFiles)
+    image = ImageFiles(j).name;  
+    %source = strcat(FaceDatasetSubDir{i},image);
+    source = fullfile(FaceDataset,FaceDatasetFolders{i},image);
+    destTrain = fullfile(TrainingDataset,TrainingDatasetFolders{i},image);
+    destTest= fullfile(TestingDataset,TestingDatasetFolders{i},image);
+    %If index is less than 5 copy pgm file to a person folder in 
+    %'\TrainingDataset'
+    if split_definition(j) == "train"
+        copyfile(source,destTrain)        
+    elseif split_definition(j) == "test" %Else if index is more than 5 copy pgm file to a Person folder in '\TestingDataset'
+        copyfile(source,destTest)       
+        
+    end    
+  end
 end
 
 %Function to move pgm vision files in 50/50 split into the Person1 to
@@ -129,25 +197,25 @@ idxSubDir = [SubDirInFaceDataset.isdir] & ~strcmp({SubDirInFaceDataset.name},'.'
 %Get all the s1 to s40 subdirectories in the '\FaceDataset'
 %image source directory
 FaceDatasetFolders = {SubDirInFaceDataset(idxSubDir).name};
-%FaceDatasetsubdir = cell(1,numel(FaceDatasetFolders));
+%FaceDatasetSubDir = cell(1,numel(FaceDatasetFolders));
 
 SubDirInTestingDataset= dir(TestingDataset);
 idxSubDir = [SubDirInTestingDataset.isdir] & ~strcmp({SubDirInTestingDataset.name},'.') & ~strcmp({SubDirInTestingDataset.name},'..');
 %Folders in TestingDataset
 %Get all the Person1 to Person40 folders in '\TestingDataset'
 TestingDatasetFolders = {SubDirInTestingDataset(idxSubDir).name};
-%TestingDatasetsubdir = cell(1,numel(TestingDatasetFolders));
+%TestingDatasetSubDir = cell(1,numel(TestingDatasetFolders));
 
 SubDirInTrainingDataset= dir(TrainingDataset);
 idxSubDir = [SubDirInTrainingDataset.isdir] & ~strcmp({SubDirInTrainingDataset.name},'.') & ~strcmp({SubDirInTrainingDataset.name},'..');
 %Get all the Person1 to Person40 folders in '\TrainingDataset'
 TrainingDatasetFolders = {SubDirInTrainingDataset(idxSubDir).name};
-TrainingDatasetsubdir = cell(1,numel(TrainingDatasetFolders));
+TrainingDatasetSubDir = cell(1,numel(TrainingDatasetFolders));
 
 %Loop through the indexed folders corresponding all the s1 to s40 subfolders in
 %'\FaceDataset'
 for i= 1:numel(FaceDatasetFolders)
-  FaceDatasetsubdir{i} = fullfile(FaceDataset,FaceDatasetFolders{i});
+  FaceDatasetSubDir{i} = fullfile(FaceDataset,FaceDatasetFolders{i});
   
   %Get all the pgm files in the source based indexed folder and index them 
   ImageFiles = dir(fullfile(FaceDataset,FaceDatasetFolders{i},'*.pgm'));   %dir
@@ -156,20 +224,20 @@ for i= 1:numel(FaceDatasetFolders)
   %Get the indexed subfolders corresponding to Person1 to Person40 subdirectories in
   %'\TrainingDataset' that have a one to one correspondence
   %with those 'in '\FaceDataset 
-  TrainingDatasetsubdir{i} = fullfile(TrainingDataset,TrainingDatasetFolders{i});
-  %disp(TrainingDatasetsubdir{i})
+  TrainingDatasetSubDir{i} = fullfile(TrainingDataset,TrainingDatasetFolders{i});
+  %disp(TrainingDatasetSubDir{i})
   
   %Get the indexed subfolders corresponding to Person1 to Person40 subdirectories in
   %'\TestingDataset' that have a one to one correspondence
   %match with those %'in '\FaceDataset 
-  TestingDatasetsubdir{i} =  fullfile(TestingDataset,TestingDatasetFolders{i});
-  %disp(TestingDatasetsubdir{i})
+  TestingDatasetSubDir{i} =  fullfile(TestingDataset,TestingDatasetFolders{i});
+  %disp(TestingDatasetSubDir{i})
   
   %Loop through all the indexed pmg images in each the s1 to s40 subfolders in
   %'\FaceDataset'
   for j = 1:numel(ImageFiles)
     image = ImageFiles(j).name;  
-    %source = strcat(FaceDatasetsubdir{i},image);
+    %source = strcat(FaceDatasetSubDir{i},image);
     source = fullfile(FaceDataset,FaceDatasetFolders{i},image);
     destTrain = fullfile(TrainingDataset,TrainingDatasetFolders{i},image);
     destTest= fullfile(TestingDataset,TestingDatasetFolders{i},image);
@@ -194,7 +262,7 @@ idxSubDir = [SubDirInFaceDataset.isdir] & ~strcmp({SubDirInFaceDataset.name},'.'
 %Get all the indexed s1 to s40 subdirectories in the '\FaceDataset'
 %image source directory
 FaceDatasetFolders = {SubDirInFaceDataset(idxSubDir).name};
-FaceDatasetsubdir = cell(1,numel(FaceDatasetFolders));
+FaceDatasetSubDir = cell(1,numel(FaceDatasetFolders));
 
 
 SubDirInTestingDataset= dir(TestingDataset);
@@ -202,32 +270,32 @@ idxSubDir = [SubDirInTestingDataset.isdir] & ~strcmp({SubDirInTestingDataset.nam
 %Get all the indexed  person1 to person40 subdirectories in the '\TestingDataset'
 %image source directory
 TestingDatasetFolders = {SubDirInTestingDataset(idxSubDir).name};
-TestingDatasetsubdir = cell(1,numel(TestingDatasetFolders));
+TestingDatasetSubDir = cell(1,numel(TestingDatasetFolders));
 
 SubDirInTrainingDataset= dir(TrainingDataset);
 idxSubDir = [SubDirInTrainingDataset.isdir] & ~strcmp({SubDirInTrainingDataset.name},'.') & ~strcmp({SubDirInTrainingDataset.name},'..');
 %Get all the indexed  person1 to person40 subdirectories in the '\TrainingDataset'
 %image source directory
 TrainingDatasetFolders = {SubDirInTrainingDataset(idxSubDir).name};
-TrainingDatasetsubdir = cell(1,numel(TrainingDatasetFolders));
+TrainingDatasetSubDir = cell(1,numel(TrainingDatasetFolders));
 
 %Loop through all the indexed pmg images in each the s1 to s40 subfolders in
 %'\FaceDataset'
 for i= 1:numel(FaceDatasetFolders)
-  FaceDatasetsubdir{i} = fullfile(FaceDataset,FaceDatasetFolders{i});
+  FaceDatasetSubDir{i} = fullfile(FaceDataset,FaceDatasetFolders{i});
   ImageFiles = dir(fullfile(FaceDataset,FaceDatasetFolders{i},'*.pgm'));   %dir
   SizeImageFiles = cell(size(ImageFiles));
-  TrainingDatasetsubdir{i} = fullfile(TrainingDataset,TrainingDatasetFolders{i});
-  %disp(TrainingDatasetsubdir{i})
-  TestingDatasetsubdir{i} =  fullfile(TestingDataset,TestingDatasetFolders{i});
-  %disp(TestingDatasetsubdir{i})
+  TrainingDatasetSubDir{i} = fullfile(TrainingDataset,TrainingDatasetFolders{i});
+  %disp(TrainingDatasetSubDir{i})
+  TestingDatasetSubDir{i} =  fullfile(TestingDataset,TestingDatasetFolders{i});
+  %disp(TestingDatasetSubDir{i})
   %Loop through all the indexed pmg images in each the s1 to s40 subfolders in
   %'\FaceDataset'
   for j = 1:numel(ImageFiles)
     %Remainder after index is divided by two   
     rem = mod(j,2);
     image = ImageFiles(j).name;  
-    %source = strcat(FaceDatasetsubdir{i},image);
+    %source = strcat(FaceDatasetSubDir{i},image);
     source = fullfile(FaceDataset,FaceDatasetFolders{i},image);
     destTrain = fullfile(TrainingDataset,TrainingDatasetFolders{i},image);
     destTest= fullfile(TestingDataset,TestingDatasetFolders{i},image);
@@ -265,21 +333,26 @@ val = get(hObject,'Value');
 % Set current data to the selected data set.
 
 %read in a value from the dropdown box 
+split_def = ["train", "train", "train", "train", "train", "test", "test", "test", "test", "test"];
+
+disp(str{val})
 switch str{val}
 case 'Middle Split' % User selects middle split
-   disp('middle split')
-   %Clear any pgm image files in the TestingDataset and TrainingDataset  
-   delete_files_in_training_and_test_sets(handles.TestingDataset,handles.TrainingDataset)
-   %Allocate image pgm files to the TestingDataset and TrainingDataset according to middle split
-   %operation
-   middle_split(handles.FaceDataset, handles.TestingDataset,handles.TrainingDataset)
+   split_def = ["train", "train", "train", "train", "train", "test", "test", "test", "test", "test"];
 case 'Interleave' % User selects interleave
-   %Clear any pgm image files in the TestingDataset and TrainingDataset   
-   delete_files_in_training_and_test_sets(handles.TestingDataset,handles.TrainingDataset)
-    %Allocate image pgm files to the TestingDataset and TrainingDataset according to interleave
-    %operation
-   interleave(handles.FaceDataset,handles.TestingDataset,handles.TrainingDataset)
+   split_def = ["train", "test", "train", "test", "train", "test", "train", "test", "train", "test"];
+case  '70/30'
+   split_def = ["train", "train", "train", "train", "train", "train", "train", "test", "test", "test"];
+case  '30/70'
+   split_def = ["test", "test", "test", "train", "train", "train", "train", "train", "train", "train"];
+case  'Lightweight'
+   split_def = ["train", "train", "test", "test", "test", "test", "test", "test", "test", "test",];
+        
 end
+
+
+delete_files_in_training_and_test_sets(handles.TestingDataset,handles.TrainingDataset)
+split_split(handles.FaceDataset, handles.TestingDataset, handles.TrainingDataset, split_def);
 
 msgbox("Files partitioned!");
 
