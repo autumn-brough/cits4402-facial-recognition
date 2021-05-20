@@ -334,19 +334,25 @@ val = get(hObject,'Value');
 
 %read in a value from the dropdown box 
 split_def = ["train", "train", "train", "train", "train", "test", "test", "test", "test", "test"];
+handles.num_training_set = 5;
 
 disp(str{val})
 switch str{val}
 case 'Middle Split' % User selects middle split
    split_def = ["train", "train", "train", "train", "train", "test", "test", "test", "test", "test"];
+    handles.num_training_set = 5;
 case 'Interleave' % User selects interleave
    split_def = ["train", "test", "train", "test", "train", "test", "train", "test", "train", "test"];
+    handles.num_training_set = 5;
 case  '70/30'
    split_def = ["train", "train", "train", "train", "train", "train", "train", "test", "test", "test"];
+    handles.num_training_set = 7;
 case  '30/70'
    split_def = ["test", "test", "test", "train", "train", "train", "train", "train", "train", "train"];
+    handles.num_training_set = 7;
 case  'Lightweight'
    split_def = ["train", "train", "test", "test", "test", "test", "test", "test", "test", "test",];
+    handles.num_training_set = 2;
         
 end
 
@@ -448,7 +454,7 @@ handles.TrainingDatasetFolders= TrainingDatasetFolders;
 %models of the images. The first index is the number of row which in this case is the height
 %of the column vector created from the images.5 is the number of images in the Person director
 %NumTrainingDatasetFolders is the number of the class specific models
-X= zeros(10304, 5,NumTrainingDatasetFolders);
+X= zeros(10304, handles.num_training_set ,NumTrainingDatasetFolders);
 %X_resized = zeros(handles.ResizedImageWidth * handles.ResizedImageWidth, 5, NumTrainingDatasetFolders);
 %Give the whose set of class specific models so it can be access in all of the gui*
 handles.X = X;

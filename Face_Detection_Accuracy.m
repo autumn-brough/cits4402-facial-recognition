@@ -31,7 +31,7 @@ NumTrainingDatasetFolders = size(TrainingDatasetFolders, 2);
 %models of the images. The first index is the number of row which in this case is the height
 %of the column vector created from the images.5 is the number of images in the Person director
 %NumTrainingDatasetFolders is the number of the class specific models
-X= zeros(10304, 5, NumTrainingDatasetFolders);
+X= zeros(10304, 7, NumTrainingDatasetFolders);
 %X_resized = zeros(handles.ResizedImageWidth * handles.ResizedImageWidth, 5, NumTrainingDatasetFolders);
 %Give the whose set of class specific models so it can be access in all of the gui*
 
