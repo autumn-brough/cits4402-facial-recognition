@@ -18,7 +18,7 @@ Algorithm outline:
 2. Downsample every image, e.g. to 10x5 or 15x15 pixels, and represent as a single-column vector
 3. For each class, represent the training set as a matrix of all training images (X)
 4. That matrix (the set of training image vectors) represents a subspace of the total image space. The goal is to find a point (y hat) within the subspace that is optimally close to y.
-5. This is given by the formula: y hat = X . ( X transpose . X )^-1 . X transpose . y
+5. This is given by the formula:   $\hat{y} = X(X^TX)^{-1}X^TY$ 
 6. For each class (and corresponding subspace), calculate y hat and use the sum of squares metric to find its distance from y. The class that minimises this distance is used as the prediction.
 
 ## 2. GUI Display
@@ -48,33 +48,42 @@ Algorithm outline:
 
 ##  4. Usage
 
+**General Udage**:
+
 1. Choose a data partition from the dropdown menu. There are two 50/50 splits, two 70/30 splits, and one 20/80 split.
 2. Click "Train On Image Gallery" to produce a trained model
 3. Click "Load Image" and navigate to an image to be tested. Image must be a 92*112 black-and-white pgm image
 4. Click "Test face" and the detector will compare the test image to all classes, and make a prediction of nearest match
 
 
-**Include information of how to add new faces (simply add to FaceDataset, AND create new empty folders in Train and Test folders)**
+
+**Adding a new face**:
+
+- Add the image to the `FaceDataset` in a folder with any name
+- Create new empty folders in the `Test` and `Train` directories, similar to the existing contents.
+
+
 
 ##  5. Result Discussion 
 
-**Discuss overall accuracy (very impressive)**
+We ran a separate matlab script that automated the testing process and tracked the number of correct and incorrect cases. The results are shown as per the below.
 
-**Discuss how not downscaling harmed our computation time**
-
+```matlab
 trained on 50/50
 200 correct, 15 incorrect, 215 total
 93.0% accuracy
-
 
 70/30 split (larger training set)
 126 correct, 3 incorrect, 129 total
 97.7% accurate
 
-
 trained on Lightweight (smaller training set)
 656 correct, 50 incorrect, 706 total
 92.9% accuracy
+```
+
+
+
 
 
 
