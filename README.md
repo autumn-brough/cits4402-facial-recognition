@@ -6,9 +6,11 @@
 - Michael Stone (17638566)
 - Jason Veljanoski (21980294) 
 
-GUI to demonstrate the facial recognition algorithm defined in "Linear Regression for Face Recognition". Full dataset should be added to FaceDataset folder before running. 
+GUI to demonstrate the facial recognition algorithm defined in "Linear Regression for Face Recognition". 
 
 ## 1. Approach followed and data partition
+
+**Talk about design decisions, implementation of algorithm, and partition choices**
 
 Algorithm outline:
 
@@ -44,8 +46,6 @@ Algorithm outline:
 - Face_Detection_Accuracy.m is a supplementary script that was used run the face detection algorithm against every file in TestingDataset, for accuracy calculations
 - accuracy_testing.txt contains output of accuracy testing
 
-
-
 ##  4. Usage
 
 1. Choose a data partition from the dropdown menu. There are two 50/50 splits, two 70/30 splits, and one 20/80 split.
@@ -54,7 +54,27 @@ Algorithm outline:
 4. Click "Test face" and the detector will compare the test image to all classes, and make a prediction of nearest match
 
 
+**Include information of how to add new faces (simply add to FaceDataset, AND create new empty folders in Train and Test folders)**
+
 ##  5. Result Discussion 
+
+**Discuss overall accuracy (very impressive)**
+
+**Discuss how not downscaling harmed our computation time**
+
+trained on 50/50
+200 correct, 15 incorrect, 215 total
+93.0% accuracy
+
+
+70/30 split (larger training set)
+126 correct, 3 incorrect, 129 total
+97.7% accurate
+
+
+trained on Lightweight (smaller training set)
+656 correct, 50 incorrect, 706 total
+92.9% accuracy
 
 
 
