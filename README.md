@@ -15,7 +15,7 @@ GUI to demonstrate the facial recognition algorithm defined in "Linear Regressio
 Algorithm outline:
 
 1. Start with a set of face classes, each with a set of training images, and a probe (test) image to classify (y)
-2. Downsample every image, e.g. to 10 \times 5 or 15 \times 15 pixels, and represent as a single-column vector
+2. Downsample every image, e.g. to 10x5 or 15x15 pixels, and represent as a single-column vector
 3. For each class, represent the training set as a matrix of all training images (X)
 4. That matrix (the set of training image vectors) represents a subspace of the total image space. The goal is to find a point (y hat) within the subspace that is optimally close to y.
 5. This is given by the formula: y hat = X . ( X transpose . X )^-1 . X transpose . y
