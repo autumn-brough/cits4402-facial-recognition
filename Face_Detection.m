@@ -1,3 +1,19 @@
+% CITS4402 - Group 34
+% Autumn Brough (21970498)
+% Michael Stone (17638566)
+% Jason Veljanoski (21980294) 
+
+% GUI to demonstrate the facial recognition algorithm defined in "Linear
+% Regression for Face Recognition". Full dataset should be added to
+% FaceDataset folder before running. 
+
+% Usage:
+% 1. Choose a data partition (50/50, 70/30, lightweight) from the dropdown menu
+% 2. Click "Train On Image Gallery" to produce a trained model
+% 3. Click "Load Image" and navigate to an image to be tested. Image must
+% be a 92*112 black-and-white pgm image
+% 4. Click "Test face" and the detector will compare the test image to all
+% classes, and make a prediction of nearest match
 
 
 function varargout = Face_Detection(varargin)

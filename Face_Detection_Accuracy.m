@@ -1,5 +1,23 @@
+% CITS4402 - Group 34
+% Autumn Brough (21970498)
+% Michael Stone (17638566)
+% Jason Veljanoski (21980294) 
+
+% Simple script adapted from Face_Detection.m for evaluating the accuracy
+% of face detection.
+% This script will train a model on the current contents of TrainingDataset
+% and test it on every item in TestingDataset
+% Printing out the prediction made by the model
+
+% This was used to produce the accuracy percentages evaluated in
+% accuracy_testing.txt
 
 
+
+
+%This MUST be updated to the current number of faces in each class of the
+%training data. e.g. 5 for 50/50, 7 for 70/30, 2 for lightweight
+NumDatapointsInTraining = 2;
 
 
 
@@ -16,11 +34,6 @@ TrainingDataset= 'TrainingDataset';
 
 
 
-
-
-
-
-
 SubDirInTrainingDataset= dir(TrainingDataset);
 idxSubDir = [SubDirInTrainingDataset.isdir] & ~strcmp({SubDirInTrainingDataset.name},'.') & ~strcmp({SubDirInTrainingDataset.name},'..');
 %Folders for each face in TrainingDataset
@@ -31,7 +44,7 @@ NumTrainingDatasetFolders = size(TrainingDatasetFolders, 2);
 %models of the images. The first index is the number of row which in this case is the height
 %of the column vector created from the images.5 is the number of images in the Person director
 %NumTrainingDatasetFolders is the number of the class specific models
-X= zeros(10304, 7, NumTrainingDatasetFolders);
+X= zeros(10304, NumDatapointsInTraining, NumTrainingDatasetFolders);
 %X_resized = zeros(handles.ResizedImageWidth * handles.ResizedImageWidth, 5, NumTrainingDatasetFolders);
 %Give the whose set of class specific models so it can be access in all of the gui*
 
